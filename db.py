@@ -66,7 +66,6 @@ def save_dagforeldrar(db, dagforeldrar):
                     '\nAND '.join(conditions)
 
             curs.execute(query, values)
-            print curs.query
             if curs.rowcount == 1:
                 _id = curs.fetchone()[0]
                 curs.execute('UPDATE dagforeldrar SET versionend = %s WHERE id = %s', (cur_version, _id))
