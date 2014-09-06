@@ -46,7 +46,7 @@ def save_dagforeldrar(db, dagforeldrar):
         print 'cur', cur_version
 
         for i, df in enumerate(dagforeldrar):
-            print i, df['nafn']
+            print i, df['nafn'].encode('utf-8')
             values = {
                     'prev_version': prev_version,
                     'cur_version': cur_version
