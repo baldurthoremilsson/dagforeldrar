@@ -42,11 +42,7 @@ def save_dagforeldrar(db, dagforeldrar):
         curs.execute('INSERT INTO versions DEFAULT VALUES RETURNING id')
         cur_version = curs.fetchone()[0]
 
-        print 'prev', prev_version
-        print 'cur', cur_version
-
         for i, df in enumerate(dagforeldrar):
-            print i, df['nafn'].encode('utf-8')
             values = {
                     'prev_version': prev_version,
                     'cur_version': cur_version
