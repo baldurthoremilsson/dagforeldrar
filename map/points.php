@@ -10,7 +10,28 @@ function pointsFromDB() {
   $connection = getDBConnection();
 
   $points = array();
-  $results = pg_query($connection, "SELECT nafn, lat, lon FROM dagforeldrar WHERE versionend = (SELECT id FROM versions ORDER BY date DESC LIMIT 1) ORDER BY nafn");
+  $query = "
+    SELECT
+      nafn,
+      lausplass,
+      heimilisfang,
+      postnumer,
+      simi,
+      hverfi,
+      netfang,
+      heimasida,
+      lat,
+      lon
+    FROM dagforeldrar
+    WHERE versionend = (
+      SELECT id
+      FROM versions
+      ORDER BY date
+      DESC LIMIT 1
+    )
+    ORDER BY nafn
+  ";
+  $results = pg_query($connection, $query);
 
   while($row = pg_fetch_assoc($results)) {
     $points[] = $row;

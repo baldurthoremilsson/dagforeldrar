@@ -74,11 +74,72 @@
 	overflow-y: scroll;
 }
 
-#list ul li {
+#list li {
 	list-style: none;
 	background: white;
 	padding: 5px;
 	font-family: sans-serif;
-	border-top: 1px solid lightgrey;
-	border-bottom: 1px solid grey;
+	border-top: 1px solid grey;
+	border-bottom: 1px solid lightgrey;
+	color: rgba(0, 0, 0, 0.7);
+	position: relative;
+	background-color: pink;
+	font-size: 12px;
+	min-height: 30px;
 }
+
+#list li:nth-child(1) {
+	background-color: blue;
+}
+
+#list li:nth-child(2) {
+	background-color: green;
+}
+
+#list li:nth-child(3) {
+	background-color: yellow;
+}
+
+#list li:nth-child(4) {
+	background-color: red;
+}
+
+#list li:nth-child(5) {
+	background-color: orange;
+}
+
+#list li .index {
+	position: absolute;
+	font-size: 40px;
+	font-weight: bold;
+	color: rgba(255, 255, 255, 0.4);
+	right: 5px;
+	bottom: 5px;
+	line-height: 30px;
+}
+
+#list li .nafn {
+	font-weight: bold;
+	font-size: 14px;
+}
+
+#list li .lausplass {
+	display: block;
+}
+
+#list li .heimilisfang {
+	display: block;
+}
+
+#list li .simi {
+	display: block;
+}
+
+#list li .netfang {
+	display: block;
+}
+
+#list li .heimasida {
+	display: block;
+}
+
