@@ -1,4 +1,5 @@
 var BASEURL = BASEURL || '';
+var CENTER = [64.135491, -21.896149];
 
 var ICONS = {
   red: L.icon({iconUrl: 'img/reddot.png'}),
@@ -118,9 +119,10 @@ var AboutControl = L.Control.extend({
 });
 
 
-function loadData(map, aboutControl) {
+function loadData(map, aboutControl, callback) {
   aboutControl.popup.loading();
   $.getJSON(BASEURL + 'points.php', function(dagforeldrar) {
+    callback(dagforeldrar);
     var layer = L.layerGroup();
     dagforeldrar.forEach(function(dagforeldri) {
       if(dagforeldri.lat === null || dagforeldri.lon === null)
@@ -139,15 +141,43 @@ function loadData(map, aboutControl) {
 
 window.addEventListener('load', function() {
   // create a map in the "map" div, set the view to a given place and zoom
-  var map = L.map('map').setView([64.135491, -21.896149], 12);
+  var map = L.map('map').setView(CENTER, 12);
+  var dagforeldrar = null;
+  var listElement = document.getElementById('list');
 
   // add an OpenStreetMap tile layer
   L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+  }).addTo(map);
 
   var aboutControl = new AboutControl();
   map.addControl(aboutControl);
 
-  loadData(map, aboutControl);
+  var meMarker = L.marker(CENTER, {
+    icon: L.icon({iconUrl: 'img/memarker.png'}),
+      draggable: true,
+  });
+  meMarker.addTo(map);
+  meMarker.on('dragend', function() {
+    var myPosition = this.getLatLng();
+    if(!dagforeldrar)
+      return;
+    dagforeldrar.sort(function(a,b) {
+      var one = Number.MAX_VALUE;
+      var two = Number.MAX_VALUE;
+
+      if(a.lat != null && a.lon != null)
+        one = myPosition.distanceTo(a);
+      if(b.lat != null && a.lon != null)
+        two = myPosition.distanceTo(b);
+
+      return one - two;
+    });
+    renderList(dagforeldrar, listElement);
+  });
+
+  loadData(map, aboutControl, function(data) {
+    dagforeldrar = data;
+    renderList(dagforeldrar, listElement);
+  });
 });
