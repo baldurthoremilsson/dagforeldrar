@@ -1,12 +1,14 @@
 var BASEURL = BASEURL || '';
 var CENTER = [64.135491, -21.896149];
 
-var ICONS = {
-  red: L.icon({iconUrl: 'img/reddot.png'}),
-  green: L.icon({iconUrl: 'img/greendot.png'}),
-  cyan: L.icon({iconUrl: 'img/cyandot.png'}),
-  blue: L.icon({iconUrl: 'img/bluedot.png'}),
-};
+var ICONS = [
+  L.icon({iconUrl: 'img/marker-icon-red.png'}),
+  L.icon({iconUrl: 'img/marker-icon-orange.png'}),
+  L.icon({iconUrl: 'img/marker-icon-yellow.png'}),
+  L.icon({iconUrl: 'img/marker-icon-green.png'}),
+  L.icon({iconUrl: 'img/marker-icon-cyan.png'}),
+  L.icon({iconUrl: 'img/marker-icon.png'}),
+];
 
 
 function getColor(routeId) {
@@ -122,15 +124,18 @@ var AboutControl = L.Control.extend({
 function loadData(map, aboutControl, callback) {
   aboutControl.popup.loading();
   $.getJSON(BASEURL + 'points.php', function(dagforeldrar) {
-    callback(dagforeldrar);
     var layer = L.layerGroup();
     dagforeldrar.forEach(function(dagforeldri) {
       if(dagforeldri.lat === null || dagforeldri.lon === null)
         return;
-      L.marker(dagforeldri).addTo(layer);
+      var marker = L.marker(dagforeldri);
+      marker.addTo(layer);
+      marker.on('click', function() { console.log('click', dagforeldri) });
+      dagforeldri.marker = marker;
     });
     map.addLayer(layer);
     aboutControl.popup.loaded();
+    callback(dagforeldrar);
   }).fail(function() {
     aboutControl.popup.loadingFailed(function() {
       loadRoutes(map, aboutControl);
@@ -160,6 +165,10 @@ window.addEventListener('load', function() {
   meMarker.addTo(map);
   meMarker.on('dragend', function() {
     var myPosition = this.getLatLng();
+    sortDagforeldrar(myPosition);
+  });
+
+  var sortDagforeldrar = function(myPosition) {
     if(!dagforeldrar)
       return;
     dagforeldrar.sort(function(a,b) {
@@ -168,16 +177,22 @@ window.addEventListener('load', function() {
 
       if(a.lat != null && a.lon != null)
         one = myPosition.distanceTo(a);
-      if(b.lat != null && a.lon != null)
+      if(b.lat != null && b.lon != null)
         two = myPosition.distanceTo(b);
 
       return one - two;
     });
+    dagforeldrar.forEach(function(dagforeldri, i) {
+      if(!dagforeldri.marker)
+        return;
+      dagforeldri.marker.setIcon(ICONS[Math.min(i, ICONS.length-1)]);
+    });
     renderList(dagforeldrar, listElement);
-  });
+  };
 
   loadData(map, aboutControl, function(data) {
     dagforeldrar = data;
+    sortDagforeldrar(meMarker.getLatLng());
     renderList(dagforeldrar, listElement);
   });
 });
