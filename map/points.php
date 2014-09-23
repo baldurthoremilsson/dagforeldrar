@@ -12,6 +12,7 @@ function pointsFromDB() {
   $points = array();
   $query = "
     SELECT
+      id,
       nafn,
       lausplass,
       heimilisfang,

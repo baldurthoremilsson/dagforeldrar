@@ -2,6 +2,28 @@
 
 var renderList = (function() {
   var Dagforeldrar = React.createClass({
+    mouseEnter: function(dagforeldri) {
+      return function() {
+        if(dagforeldri.marker === undefined)
+          return;
+        dagforeldri.marker.openPopup();
+      };
+    },
+    mouseLeave: function(dagforeldri) {
+      return function() {
+        if(dagforeldri.marker === undefined)
+          return;
+        dagforeldri.marker.closePopup();
+      };
+    },
+    mouseClick: function(dagforeldri) {
+      var map = this.props.map;
+      return function() {
+        if(dagforeldri.marker === undefined)
+          return;
+        map.setView(dagforeldri, 17);
+      };
+    },
     render: function() {
       var items = [];
       this.props.model.forEach(function(dagforeldri, i) {
@@ -27,7 +49,7 @@ var renderList = (function() {
           heimasida = <span className='heimasida'>{dagforeldri.heimasida}</span>
 
         items.push(
-          <li>
+          <li key={dagforeldri.id} onMouseEnter={this.mouseEnter(dagforeldri)} onMouseLeave={this.mouseLeave(dagforeldri)} onClick={this.mouseClick(dagforeldri)}>
             <span className='index'>{i+1}</span>
             <span className='nafn'>{dagforeldri.nafn}</span>
             {lausplass}
@@ -37,16 +59,16 @@ var renderList = (function() {
             {heimasida}
           </li>
         );
-      });
+      }.bind(this));
       return (
         <ul>{items}</ul>
       );
     },
   });
 
-  return function(dagforeldrar, element) {
+  return function(dagforeldrar, map, element) {
     React.renderComponent(
-        <Dagforeldrar model={dagforeldrar}/>,
+        <Dagforeldrar model={dagforeldrar} map={map}/>,
         element
     );
   };

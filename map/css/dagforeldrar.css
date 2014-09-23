@@ -86,6 +86,7 @@
 	background-color: #3a8ece;
 	font-size: 12px;
 	min-height: 30px;
+	cursor: pointer;
 }
 
 #list li:nth-child(1) {

@@ -1,33 +1,15 @@
 var BASEURL = BASEURL || '';
 var CENTER = [64.135491, -21.896149];
+var ZOOMLEVEL = 12;
 
 var ICONS = [
-  L.icon({iconUrl: 'img/marker-icon-red.png'}),
-  L.icon({iconUrl: 'img/marker-icon-orange.png'}),
-  L.icon({iconUrl: 'img/marker-icon-yellow.png'}),
-  L.icon({iconUrl: 'img/marker-icon-green.png'}),
-  L.icon({iconUrl: 'img/marker-icon-cyan.png'}),
-  L.icon({iconUrl: 'img/marker-icon.png'}),
+  L.icon({iconUrl: 'img/marker-icon-red.png', popupAnchor: [1, -34]}),
+  L.icon({iconUrl: 'img/marker-icon-orange.png', popupAnchor: [1, -34]}),
+  L.icon({iconUrl: 'img/marker-icon-yellow.png', popupAnchor: [1, -34]}),
+  L.icon({iconUrl: 'img/marker-icon-green.png', popupAnchor: [1, -34]}),
+  L.icon({iconUrl: 'img/marker-icon-cyan.png', popupAnchor: [1, -34]}),
+  L.icon({iconUrl: 'img/marker-icon.png', popupAnchor: [1, -34]}),
 ];
-
-
-function getColor(routeId) {
-  var iId = parseInt(routeId);
-  if(isNaN(iId))
-    return 'blue';
-  if(iId < 10)
-    return 'red';
-  if(iId < 20)
-    return 'green';
-  if(iId < 50)
-    return 'cyan';
-  return 'blue';
-}
-
-
-function getIcon(routeId) {
-  return ICONS[getColor(routeId)];
-}
 
 
 var AboutPopup = L.Popup.extend({
@@ -125,12 +107,13 @@ function loadData(map, aboutControl, callback) {
   aboutControl.popup.loading();
   $.getJSON(BASEURL + 'points.php', function(dagforeldrar) {
     var layer = L.layerGroup();
-    dagforeldrar.forEach(function(dagforeldri) {
+    dagforeldrar.forEach(function(dagforeldri, i) {
       if(dagforeldri.lat === null || dagforeldri.lon === null)
         return;
-      var marker = L.marker(dagforeldri);
-      marker.addTo(layer);
-      marker.on('click', function() { console.log('click', dagforeldri) });
+      var marker = L.marker([dagforeldri.lat, dagforeldri.lon]);
+      marker.addTo(layer)
+      var popup = L.popup({autoPan: false}).setContent('<p>' + dagforeldri.nafn + '</p>');
+      marker.bindPopup(popup);
       dagforeldri.marker = marker;
     });
     map.addLayer(layer);
@@ -141,12 +124,11 @@ function loadData(map, aboutControl, callback) {
       loadRoutes(map, aboutControl);
     })
   });
-
 }
 
 window.addEventListener('load', function() {
   // create a map in the "map" div, set the view to a given place and zoom
-  var map = L.map('map').setView(CENTER, 12);
+  var map = L.map('map').setView(CENTER, ZOOMLEVEL);
   var dagforeldrar = null;
   var listElement = document.getElementById('list');
 
@@ -156,11 +138,11 @@ window.addEventListener('load', function() {
   }).addTo(map);
 
   var aboutControl = new AboutControl();
-  map.addControl(aboutControl);
+  //map.addControl(aboutControl);
 
   var meMarker = L.marker(CENTER, {
     icon: L.icon({iconUrl: 'img/memarker.png'}),
-      draggable: true,
+    draggable: true,
   });
   meMarker.addTo(map);
   meMarker.on('dragend', function() {
@@ -187,12 +169,11 @@ window.addEventListener('load', function() {
         return;
       dagforeldri.marker.setIcon(ICONS[Math.min(i, ICONS.length-1)]);
     });
-    renderList(dagforeldrar, listElement);
+    renderList(dagforeldrar, map, listElement);
   };
 
   loadData(map, aboutControl, function(data) {
     dagforeldrar = data;
     sortDagforeldrar(meMarker.getLatLng());
-    renderList(dagforeldrar, listElement);
   });
 });
