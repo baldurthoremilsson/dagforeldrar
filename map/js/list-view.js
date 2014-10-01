@@ -27,11 +27,22 @@ var renderList = (function() {
     render: function() {
       var items = [];
       this.props.model.forEach(function(dagforeldri, i) {
+        var distance = null;
         var lausplass = null;
         var heimilisfang = null;
         var simi = null;
         var netfang = null;
         var heimasida = null;
+
+        if(dagforeldri.distance) {
+          if(dagforeldri.distance > 1000) {
+            var d = dagforeldri.distance;
+            d = (d - d % 100) / 1000; // Rounde to 100m
+            d = d.toString().replace('.', ',');
+            distance = <span className='distance'>{d} km</span>
+          } else
+            distance = <span className='distance'>{dagforeldri.distance} m</span>
+        }
 
         if(dagforeldri.lausplass)
           lausplass = <span className='lausplass'>Pláss: {dagforeldri.lausplass}</span>
@@ -52,6 +63,7 @@ var renderList = (function() {
           <li key={dagforeldri.id} onMouseEnter={this.mouseEnter(dagforeldri)} onMouseLeave={this.mouseLeave(dagforeldri)} onClick={this.mouseClick(dagforeldri)}>
             <span className='index'>{i+1}</span>
             <span className='nafn'>{dagforeldri.nafn}</span>
+            {distance}
             {lausplass}
             {heimilisfang}
             {simi}

@@ -154,15 +154,18 @@ window.addEventListener('load', function() {
     if(!dagforeldrar)
       return;
     dagforeldrar.sort(function(a,b) {
-      var one = Number.MAX_VALUE;
-      var two = Number.MAX_VALUE;
+      var distA = Number.MAX_VALUE;
+      var distB = Number.MAX_VALUE;
 
       if(a.lat != null && a.lon != null)
-        one = myPosition.distanceTo(a);
+        distA = myPosition.distanceTo(a);
       if(b.lat != null && b.lon != null)
-        two = myPosition.distanceTo(b);
+        distB = myPosition.distanceTo(b);
 
-      return one - two;
+      a.distance = parseInt(distA);
+      b.distance = parseInt(distB);
+
+      return distA - distB;
     });
     dagforeldrar.forEach(function(dagforeldri, i) {
       if(!dagforeldri.marker)

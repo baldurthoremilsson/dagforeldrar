@@ -124,6 +124,11 @@
 	font-size: 14px;
 }
 
+#list li .distance {
+	display: block;
+	font-style: italic;
+}
+
 #list li .lausplass {
 	display: block;
 }
