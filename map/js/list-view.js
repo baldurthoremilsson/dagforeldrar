@@ -49,8 +49,8 @@ var renderList = (function() {
         if(dagforeldri.lausplass)
           lausplass = <span className='lausplass'>Pláss: {dagforeldri.lausplass}</span>
 
-        if(dagforeldri.address)
-          heimilisfang = <span className='heimilisfang'>{dagforeldri.address}</span>
+        if(dagforeldri.heimilisfang)
+          heimilisfang = <span className='heimilisfang'>{dagforeldri.heimilisfang}</span>
 
         if(dagforeldri.simi)
           simi = <span className='simi'>{dagforeldri.simi}</span>
