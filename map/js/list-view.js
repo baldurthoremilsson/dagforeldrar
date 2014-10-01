@@ -33,6 +33,7 @@ var renderList = (function() {
         var simi = null;
         var netfang = null;
         var heimasida = null;
+        var className = null;
 
         if(dagforeldri.distance) {
           if(dagforeldri.distance > 1000) {
@@ -59,8 +60,11 @@ var renderList = (function() {
         if(dagforeldri.heimasida)
           heimasida = <span className='heimasida'>{dagforeldri.heimasida}</span>
 
+        if(dagforeldri.active)
+          className = 'active';
+
         items.push(
-          <li key={dagforeldri.id} onMouseEnter={this.mouseEnter(dagforeldri)} onMouseLeave={this.mouseLeave(dagforeldri)} onClick={this.mouseClick(dagforeldri)}>
+          <li key={dagforeldri.id} className={className} onMouseEnter={this.mouseEnter(dagforeldri)} onMouseLeave={this.mouseLeave(dagforeldri)} onClick={this.mouseClick(dagforeldri)}>
             <span className='index'>{i+1}</span>
             <span className='nafn'>{dagforeldri.nafn}</span>
             {distance}

@@ -103,11 +103,12 @@ var AboutControl = L.Control.extend({
 });
 
 
-function loadData(map, aboutControl, callback) {
+function loadData(map, aboutControl, render, callback) {
   aboutControl.popup.loading();
   $.getJSON(BASEURL + 'points.php', function(dagforeldrar) {
     var layer = L.layerGroup();
     dagforeldrar.forEach(function(dagforeldri, i) {
+      dagforeldri.active = false;
       if(dagforeldri.lat === null || dagforeldri.lon === null)
         return;
       var marker = L.marker([dagforeldri.lat, dagforeldri.lon]);
@@ -115,6 +116,19 @@ function loadData(map, aboutControl, callback) {
       var popup = L.popup({autoPan: false}).setContent('<p>' + dagforeldri.nafn + '</p>');
       marker.bindPopup(popup);
       dagforeldri.marker = marker;
+
+      marker.on('mousedown', function() {
+        dagforeldri.active = true;
+        render();
+      });
+      marker.on('mouseover', function() {
+        dagforeldri.active = true;
+        render();
+      });
+      marker.on('mouseout', function() {
+        dagforeldri.active = false;
+        render();
+      });
     });
     map.addLayer(layer);
     aboutControl.popup.loaded();
@@ -131,6 +145,10 @@ window.addEventListener('load', function() {
   var map = L.map('map').setView(CENTER, ZOOMLEVEL);
   var dagforeldrar = null;
   var listElement = document.getElementById('list');
+
+  var render = function() {
+    renderList(dagforeldrar, map, listElement);
+  };
 
   // add an OpenStreetMap tile layer
   L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -172,10 +190,10 @@ window.addEventListener('load', function() {
         return;
       dagforeldri.marker.setIcon(ICONS[Math.min(i, ICONS.length-1)]);
     });
-    renderList(dagforeldrar, map, listElement);
+    render();
   };
 
-  loadData(map, aboutControl, function(data) {
+  loadData(map, aboutControl, render, function(data) {
     dagforeldrar = data;
     sortDagforeldrar(meMarker.getLatLng());
   });

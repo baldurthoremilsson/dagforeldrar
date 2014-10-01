@@ -87,6 +87,19 @@
 	font-size: 12px;
 	min-height: 30px;
 	cursor: pointer;
+	position: relative;
+}
+
+#list li:hover:after,
+#list li.active:after {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	content: ' ';
+	top: 0;
+	left: 0;
+	border: 5px solid rgba(0, 0, 0, 0.5);
+	box-sizing: border-box;
 }
 
 #list li:nth-child(1) {
