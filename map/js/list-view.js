@@ -25,6 +25,7 @@ var renderList = (function() {
       };
     },
     render: function() {
+      var refs = this.refs;
       var items = [];
       this.props.model.forEach(function(dagforeldri, i) {
         var distance = null;
@@ -63,8 +64,13 @@ var renderList = (function() {
         if(dagforeldri.active)
           className = 'active';
 
+        dagforeldri.scrollIntoView = function() {
+          var node = refs[this.id].getDOMNode();
+          node.scrollIntoView();
+        };
+
         items.push(
-          <li key={dagforeldri.id} className={className} onMouseEnter={this.mouseEnter(dagforeldri)} onMouseLeave={this.mouseLeave(dagforeldri)} onClick={this.mouseClick(dagforeldri)}>
+          <li ref={dagforeldri.id} key={dagforeldri.id} className={className} onMouseEnter={this.mouseEnter(dagforeldri)} onMouseLeave={this.mouseLeave(dagforeldri)} onClick={this.mouseClick(dagforeldri)}>
             <span className='index'>{i+1}</span>
             <span className='nafn'>{dagforeldri.nafn}</span>
             {distance}

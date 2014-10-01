@@ -120,6 +120,7 @@ function loadData(map, aboutControl, render, callback) {
       marker.on('mousedown', function() {
         dagforeldri.active = true;
         render();
+        dagforeldri.scrollIntoView();
       });
       marker.on('mouseover', function() {
         dagforeldri.active = true;
