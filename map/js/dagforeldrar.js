@@ -1,6 +1,7 @@
 var BASEURL = BASEURL || '';
 var CENTER = [64.135491, -21.896149];
 var ZOOMLEVEL = 12;
+var CENTER_OFFSET = [-340, 0];
 
 var ICONS = [
   L.icon({iconUrl: 'img/marker-icon-red.png', popupAnchor: [1, -34]}),
@@ -142,6 +143,13 @@ function loadData(map, aboutControl, render, callback) {
 }
 
 window.addEventListener('load', function() {
+  L.Map.prototype._getCenterLayerPoint = function() {
+    return this.containerPointToLayerPoint(this.getSize().add(CENTER_OFFSET)._divideBy(2));
+  };
+  L.Map.prototype._getNewTopLeftPoint = function(center, zoom) {
+    var viewHalf = this.getSize().add(CENTER_OFFSET)._divideBy(2);
+    return this.project(center, zoom)._subtract(viewHalf)._round();
+  };
   // create a map in the "map" div, set the view to a given place and zoom
   var map = L.map('map').setView(CENTER, ZOOMLEVEL);
   var dagforeldrar = null;
