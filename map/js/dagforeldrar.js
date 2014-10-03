@@ -142,6 +142,21 @@ function loadData(map, aboutControl, render, callback) {
   });
 }
 
+function getCenter() {
+  var lat = localStorage['startLat'];
+  var lng = localStorage['startLng'];
+  if(typeof lat !== 'undefined' && typeof lng !== 'undefined') {
+    return [lat, lng];
+  } else {
+    return CENTER;
+  }
+}
+
+function setCenter(lat, lng) {
+  localStorage['startLat'] = lat;
+  localStorage['startLng'] = lng;
+}
+
 window.addEventListener('load', function() {
   L.Map.prototype._getCenterLayerPoint = function() {
     return this.containerPointToLayerPoint(this.getSize().add(CENTER_OFFSET)._divideBy(2));
@@ -151,7 +166,7 @@ window.addEventListener('load', function() {
     return this.project(center, zoom)._subtract(viewHalf)._round();
   };
   // create a map in the "map" div, set the view to a given place and zoom
-  var map = L.map('map').setView(CENTER, ZOOMLEVEL);
+  var map = L.map('map').setView(getCenter(), ZOOMLEVEL);
   var dagforeldrar = null;
   var listElement = document.getElementById('list');
 
@@ -166,14 +181,14 @@ window.addEventListener('load', function() {
 
   var aboutControl = new AboutControl();
   //map.addControl(aboutControl);
-
-  var meMarker = L.marker(CENTER, {
+  var meMarker = L.marker(getCenter(), {
     icon: L.icon({iconUrl: 'img/memarker.png'}),
     draggable: true,
   });
   meMarker.addTo(map);
   meMarker.on('dragend', function() {
     var myPosition = this.getLatLng();
+    setCenter(myPosition.lat, myPosition.lng);
     sortDagforeldrar(myPosition);
   });
 
